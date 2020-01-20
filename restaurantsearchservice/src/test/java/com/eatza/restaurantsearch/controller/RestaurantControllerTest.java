@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
+import org.bouncycastle.crypto.tls.SignatureAlgorithm;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -36,8 +36,6 @@ import com.eatza.restaurantsearch.model.Restaurant;
 import com.eatza.restaurantsearch.service.restaurantservice.RestaurantService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 
 @RunWith(SpringRunner.class)
@@ -57,12 +55,6 @@ public class RestaurantControllerTest {
 	Restaurant restaurant;
 	List<Restaurant> restaurants;
 	String jwt="";
-	private static final long EXPIRATIONTIME = 900000;
-	@Before
-	public void setup() {
-		jwt = "Bearer "+Jwts.builder().setSubject("user").claim("roles", "user").setIssuedAt(new Date())
-				.signWith(SignatureAlgorithm.HS256, "secretkey").setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME)).compact();
-	}
 
 
 	// Passing
@@ -603,8 +595,6 @@ public class RestaurantControllerTest {
 	public void getItemsByRestaurantId_invalid() throws Exception {
 		// mocking
 		when(restaurantService.findMenuItemByRestaurantId(anyLong(), anyInt(), anyInt())).thenReturn(Arrays.asList());
-		jwt = "Bearer "+Jwts.builder().setSubject("user").claim("roles", "user").setIssuedAt(new Date())
-				.signWith(SignatureAlgorithm.HS256, "secretkey").setExpiration(new Date(System.currentTimeMillis() - EXPIRATIONTIME)).compact();
 		// request
 		RequestBuilder request = MockMvcRequestBuilders
 				.get("/restaurant/items/1?pagenumber=1&pagesize=10")
