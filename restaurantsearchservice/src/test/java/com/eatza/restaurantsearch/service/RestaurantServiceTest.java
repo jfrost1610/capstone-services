@@ -187,7 +187,7 @@ public class RestaurantServiceTest {
 	public void findById_empty() {
 		when(restaurantRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-		Restaurant rest = restaurantService.findById(1L);
+		restaurantService.findById(1L);
 	}
 
 	@Test

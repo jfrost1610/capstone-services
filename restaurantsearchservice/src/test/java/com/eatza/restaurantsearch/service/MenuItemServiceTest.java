@@ -69,7 +69,7 @@ public class MenuItemServiceTest {
 		when(menuItemRepository.findByNameContaining(any(String.class), any(Pageable.class))).thenReturn(page);
 		when(menuService.getMenuById(anyLong())).thenReturn(optionalMenu);
 
-		List<Restaurant> restaurantsToReturn = menuItemService.findByName("Dominos", 1, 10);
+		menuItemService.findByName("Dominos", 1, 10);
 
 	}
 
@@ -121,7 +121,7 @@ public class MenuItemServiceTest {
 				.thenReturn(Mockito.mock(Page.class));
 		when(menuService.getMenuById(anyLong())).thenReturn(optionalMenu);
 
-		List<Restaurant> restaurantsToReturn = menuItemService.findByName("Dominos", 1, 10);
+		menuItemService.findByName("Dominos", 1, 10);
 
 	}
 
@@ -194,7 +194,7 @@ public class MenuItemServiceTest {
 		Optional<MenuItem> menuItemsToReturn = Optional.of(menuItems);
 		when(menuItemService.findById(anyLong())).thenReturn(menuItemsToReturn);
 		Optional<MenuItem> items = menuItemService.findById(1L);
-		assertTrue(menuItemsToReturn.isPresent());
+		assertTrue(items.isPresent());
 	}
 
 }
