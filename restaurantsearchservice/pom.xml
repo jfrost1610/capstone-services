@@ -10,7 +10,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.eatza</groupId>
-	<artifactId>restaurantsearchservice</artifactId>
+	<artifactId>capstone-restaurant-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>restaurantsearchservice</name>
 	<description>Search service for eatza restaurant</description>

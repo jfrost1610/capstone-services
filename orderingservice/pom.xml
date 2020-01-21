@@ -10,7 +10,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.eatza</groupId>
-	<artifactId>orderingservice</artifactId>
+	<artifactId>capstone-ordering-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>orderingservice</name>
 	<description>Demo project for Spring Boot</description>
