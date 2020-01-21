@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.eatza.restaurantsearch.dto.RestaurantRequestDto;
 import com.eatza.restaurantsearch.dto.RestaurantResponseDto;
+import com.eatza.restaurantsearch.exception.ItemNotFoundException;
 import com.eatza.restaurantsearch.model.MenuItem;
 import com.eatza.restaurantsearch.model.Restaurant;
 

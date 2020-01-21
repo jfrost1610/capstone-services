@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.eatza.order.dto.ItemFetchDto;
 
 @FeignClient(name = "restaurantsearchservice")
-@RequestMapping("item")
+@RequestMapping("items")
 public interface MenuItemFeignClient {
 
-	@GetMapping(value = "/id/{itemId}")
+	@GetMapping(value = "/{itemId}")
 	public ItemFetchDto getItemById(@PathVariable("itemId") long itemId);
 
 }

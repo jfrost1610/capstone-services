@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
-import com.eatza.order.client.MenuItemFeignClient;
 import com.eatza.order.dto.ItemFetchDto;
 import com.eatza.order.dto.OrderRequestDto;
 import com.eatza.order.dto.OrderUpdateDto;
@@ -31,9 +30,6 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	ItemService itemService;
 
-	@Autowired
-	MenuItemFeignClient menuItemFeignClient;
-
 	private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
 	@Override
@@ -47,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
 		for (OrderedItemsDto itemDto : itemsDtoList) {
 			try {
 				logger.debug("Calling restaurant search service to get item details");
-				ItemFetchDto item = menuItemFeignClient.getItemById(itemDto.getItemId());
+				ItemFetchDto item = itemService.findItemById(itemDto.getItemId());
 
 				if (item == null) {
 
@@ -138,7 +134,7 @@ public class OrderServiceImpl implements OrderService {
 		for (OrderedItemsDto itemDto : itemsDtoList) {
 			try {
 
-				ItemFetchDto item = menuItemFeignClient.getItemById(itemDto.getItemId());
+				ItemFetchDto item = itemService.findItemById(itemDto.getItemId());
 
 				if (item == null) {
 					// deleting previously updated items
