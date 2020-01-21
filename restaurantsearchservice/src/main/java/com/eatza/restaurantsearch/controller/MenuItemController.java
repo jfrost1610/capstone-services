@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.eatza.restaurantsearch.dto.ItemRequestDto;
 import com.eatza.restaurantsearch.exception.ItemNotFoundException;
 import com.eatza.restaurantsearch.model.MenuItem;
-import com.eatza.restaurantsearch.service.menuitemservice.MenuItemService;
+import com.eatza.restaurantsearch.service.MenuItemService;
 
 import lombok.extern.slf4j.Slf4j;
 

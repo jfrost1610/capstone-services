@@ -19,7 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.eatza.order.model.Order;
 import com.eatza.order.model.OrderedItem;
 import com.eatza.order.repository.OrderedItemRepository;
-import com.eatza.order.service.itemservice.ItemServiceImpl;
+import com.eatza.order.service.ItemService;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
@@ -29,7 +29,7 @@ public class ItemServiceTest {
 	OrderedItemRepository itemRepository;
 	
 	@InjectMocks
-	ItemServiceImpl itemServiceImpl;
+	ItemService itemServiceImpl;
 	
 	
 	@Test

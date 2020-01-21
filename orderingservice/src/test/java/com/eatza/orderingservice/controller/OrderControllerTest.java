@@ -29,7 +29,7 @@ import com.eatza.order.dto.OrderedItemsDto;
 import com.eatza.order.exception.InvalidTokenException;
 import com.eatza.order.model.Order;
 import com.eatza.order.model.OrderedItem;
-import com.eatza.order.service.orderservice.OrderServiceImpl;
+import com.eatza.order.service.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
@@ -41,7 +41,7 @@ public class OrderControllerTest {
 	private MockMvc mockMvc;
 
 	@MockBean
-	private OrderServiceImpl orderService;
+	private OrderService orderService;
 
 	@Autowired
 	private ObjectMapper objectMapper;

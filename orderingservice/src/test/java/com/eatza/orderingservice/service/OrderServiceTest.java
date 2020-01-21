@@ -34,21 +34,21 @@ import com.eatza.order.exception.OrderException;
 import com.eatza.order.model.Order;
 import com.eatza.order.model.OrderedItem;
 import com.eatza.order.repository.OrderRepository;
-import com.eatza.order.service.itemservice.ItemServiceImpl;
-import com.eatza.order.service.orderservice.OrderServiceImpl;
+import com.eatza.order.service.ItemService;
+import com.eatza.order.service.OrderService;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
 public class OrderServiceTest {
 
 	@InjectMocks
-	private OrderServiceImpl orderService;
+	private OrderService orderService;
 
 	@Mock
 	private OrderRepository orderRepository;
 
 	@Mock
-	private ItemServiceImpl itemService;
+	private ItemService itemService;
 
 	@Mock
 	private RestTemplate restTemplate;

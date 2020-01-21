@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.eatza.restaurantsearch.dto.ItemRequestDto;
 import com.eatza.restaurantsearch.model.Menu;
 import com.eatza.restaurantsearch.model.MenuItem;
-import com.eatza.restaurantsearch.service.menuitemservice.MenuItemService;
+import com.eatza.restaurantsearch.service.MenuItemService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)

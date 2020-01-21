@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.eatza.restaurantsearch.model.Menu;
 import com.eatza.restaurantsearch.model.Restaurant;
 import com.eatza.restaurantsearch.repository.MenuRepository;
-import com.eatza.restaurantsearch.service.menuservice.MenuServiceImpl;
+import com.eatza.restaurantsearch.service.MenuService;
 
 
 @RunWith(SpringRunner.class)
@@ -25,7 +25,7 @@ public class MenuServiceTest {
 	
 	
 	@InjectMocks
-	private MenuServiceImpl menuService;
+	private MenuService menuService;
 	
 	@Mock
 	private MenuRepository menuRepository;

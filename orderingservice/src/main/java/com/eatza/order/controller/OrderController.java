@@ -19,7 +19,7 @@ import com.eatza.order.dto.OrderUpdateDto;
 import com.eatza.order.dto.OrderUpdateResponseDto;
 import com.eatza.order.exception.OrderException;
 import com.eatza.order.model.Order;
-import com.eatza.order.service.orderservice.OrderService;
+import com.eatza.order.service.OrderService;
 
 @RestController
 public class OrderController {

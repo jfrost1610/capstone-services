@@ -1,11 +1,9 @@
-package com.eatza.order.service.orderservice;
+package com.eatza.order.service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
@@ -19,10 +17,12 @@ import com.eatza.order.exception.OrderException;
 import com.eatza.order.model.Order;
 import com.eatza.order.model.OrderedItem;
 import com.eatza.order.repository.OrderRepository;
-import com.eatza.order.service.itemservice.ItemService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
-public class OrderServiceImpl implements OrderService {
+public class OrderService {
 
 	@Autowired
 	OrderRepository orderRepository;
@@ -30,19 +30,16 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	ItemService itemService;
 
-	private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
-
-	@Override
 	public Order placeOrder(OrderRequestDto orderRequest) throws OrderException {
-		logger.debug("In place order method, creating order object to persist");
+		log.debug("In place order method, creating order object to persist");
 		Order order = new Order(orderRequest.getCustomerId(), "CREATED", orderRequest.getRestaurantId());
-		logger.debug("saving order in db");
+		log.debug("saving order in db");
 		Order savedOrder = orderRepository.save(order);
-		logger.debug("Getting all ordered items to persist");
+		log.debug("Getting all ordered items to persist");
 		List<OrderedItemsDto> itemsDtoList = orderRequest.getItems();
 		for (OrderedItemsDto itemDto : itemsDtoList) {
 			try {
-				logger.debug("Calling restaurant search service to get item details");
+				log.debug("Calling restaurant search service to get item details");
 				ItemFetchDto item = itemService.findItemById(itemDto.getItemId());
 
 				if (item == null) {
@@ -68,32 +65,29 @@ public class OrderServiceImpl implements OrderService {
 						"Something went wrong, looks " + "like restaurant is currently not accepting orders");
 			}
 		}
-		logger.debug("Saved order to db");
+		log.debug("Saved order to db");
 		return savedOrder;
 	}
 
-	@Override
 	public boolean cancelOrder(Long orderId) {
-		logger.debug("In cancel order service method, calling repository");
+		log.debug("In cancel order service method, calling repository");
 		Optional<Order> order = orderRepository.findById(orderId);
 		if (order.isPresent()) {
-			logger.debug("Order was found in db");
+			log.debug("Order was found in db");
 			order.get().setStatus("CANCELLED");
 			orderRepository.save(order.get());
 			return true;
 		} else {
-			logger.debug("Order not found");
+			log.debug("Order not found");
 			return false;
 		}
 
 	}
 
-	@Override
 	public Optional<Order> getOrderById(Long id) {
 		return orderRepository.findById(id);
 	}
 
-	@Override
 	public double getOrderAmountByOrderId(Long id) {
 
 		Optional<Order> order = orderRepository.findById(id);
@@ -111,7 +105,6 @@ public class OrderServiceImpl implements OrderService {
 
 	}
 
-	@Override
 	public OrderUpdateResponseDto updateOrder(OrderUpdateDto orderUpdateRequest) throws OrderException {
 
 		Order order = new Order(orderUpdateRequest.getCustomerId(), "UPDATED", orderUpdateRequest.getRestaurantId());

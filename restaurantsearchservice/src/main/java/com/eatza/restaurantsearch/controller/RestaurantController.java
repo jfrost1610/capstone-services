@@ -20,8 +20,8 @@ import com.eatza.restaurantsearch.exception.RestaurantBadRequestException;
 import com.eatza.restaurantsearch.exception.RestaurantNotFoundException;
 import com.eatza.restaurantsearch.model.MenuItem;
 import com.eatza.restaurantsearch.model.Restaurant;
-import com.eatza.restaurantsearch.service.menuitemservice.MenuItemService;
-import com.eatza.restaurantsearch.service.restaurantservice.RestaurantService;
+import com.eatza.restaurantsearch.service.MenuItemService;
+import com.eatza.restaurantsearch.service.RestaurantService;
 
 import lombok.extern.slf4j.Slf4j;
 
