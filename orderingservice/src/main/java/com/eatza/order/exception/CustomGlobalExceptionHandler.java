@@ -12,12 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(UnauthorizedException.class)
-	public ResponseEntity<Object> exception(UnauthorizedException exception) {
-		log.error("Handling UnauthorizedException! {}", exception.getMessage());
-		return new ResponseEntity<>("Invalid Credentials", HttpStatus.UNAUTHORIZED);
-	}
-
 	@ExceptionHandler(OrderException.class)
 	public ResponseEntity<Object> exception(OrderException exception) {
 		log.error("Handling OrderException! {}", exception.getMessage());
