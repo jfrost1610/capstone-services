@@ -15,7 +15,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -41,8 +40,6 @@ public class MenuItemControllerTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	String jwt = "";
-
 	@Test
 	public void addMenuItem() throws Exception {
 		ItemRequestDto requestDto = new ItemRequestDto();
@@ -52,20 +49,9 @@ public class MenuItemControllerTest {
 		requestDto.setPrice(200);
 
 		when(menuItemService.saveMenuItem(any(ItemRequestDto.class))).thenReturn(new MenuItem());
-		RequestBuilder request = MockMvcRequestBuilders.post("/item").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString((requestDto))).header(HttpHeaders.AUTHORIZATION, jwt);
+		RequestBuilder request = MockMvcRequestBuilders.post("/items").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString((requestDto)));
 		mockMvc.perform(request).andExpect(status().is(200)).andExpect(content().string("Item Added successfully"))
-				.andReturn();
-	}
-
-	@Test
-	public void getRestaurantsContainingItem() throws Exception {
-
-		when(menuItemService.findByName(any(String.class), anyInt(), anyInt())).thenReturn(new ArrayList<>());
-		RequestBuilder request = MockMvcRequestBuilders.get("/restaurant/item/name/rajma?pagenumber=1&pagesize=10")
-				.accept(MediaType.ALL).header(HttpHeaders.AUTHORIZATION, jwt);
-		mockMvc.perform(request).andExpect(status().is(200))
-
 				.andReturn();
 	}
 
@@ -74,8 +60,7 @@ public class MenuItemControllerTest {
 		MenuItem menuItem = new MenuItem("Rajma", "Beans", 120, new Menu());
 		Optional<MenuItem> returnedItem = Optional.of(menuItem);
 		when(menuItemService.findById(anyLong())).thenReturn(returnedItem);
-		RequestBuilder request = MockMvcRequestBuilders.get("/item/id/1?pagenumber=1&pagesize=10").accept(MediaType.ALL)
-				.header(HttpHeaders.AUTHORIZATION, jwt);
+		RequestBuilder request = MockMvcRequestBuilders.get("/items/1?pagenumber=1&pagesize=10").accept(MediaType.ALL);
 		mockMvc.perform(request).andExpect(status().is(200))
 
 				.andReturn();
@@ -84,8 +69,7 @@ public class MenuItemControllerTest {
 	@Test
 	public void getItemById_empty() throws Exception {
 		when(menuItemService.findById(anyLong())).thenReturn(Optional.empty());
-		RequestBuilder request = MockMvcRequestBuilders.get("/item/id/1?pagenumber=1&pagesize=10").accept(MediaType.ALL)
-				.header(HttpHeaders.AUTHORIZATION, jwt);
+		RequestBuilder request = MockMvcRequestBuilders.get("/items/1?pagenumber=1&pagesize=10").accept(MediaType.ALL);
 		mockMvc.perform(request).andExpect(status().is(404))
 
 				.andReturn();

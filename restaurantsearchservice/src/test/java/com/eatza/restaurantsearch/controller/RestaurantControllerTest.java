@@ -18,8 +18,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -27,15 +27,17 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.eatza.restaurantsearch.dto.RestaurantRequestDto;
 import com.eatza.restaurantsearch.dto.RestaurantResponseDto;
-import com.eatza.restaurantsearch.exception.InvalidTokenException;
+import com.eatza.restaurantsearch.exception.CustomGlobalExceptionHandler;
 import com.eatza.restaurantsearch.model.Menu;
 import com.eatza.restaurantsearch.model.MenuItem;
 import com.eatza.restaurantsearch.model.Restaurant;
+import com.eatza.restaurantsearch.service.MenuItemService;
 import com.eatza.restaurantsearch.service.RestaurantService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(value = RestaurantController.class)
+@WebMvcTest(RestaurantController.class)
+@ContextConfiguration(classes = { RestaurantController.class, CustomGlobalExceptionHandler.class })
 public class RestaurantControllerTest {
 
 	@Autowired
@@ -47,9 +49,11 @@ public class RestaurantControllerTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	@MockBean
+	private MenuItemService menuItemService;
+
 	Restaurant restaurant;
 	List<Restaurant> restaurants;
-	String jwt = "";
 
 	// Passing
 	@Test
@@ -62,7 +66,7 @@ public class RestaurantControllerTest {
 		Mockito.when(restaurantService.findAllRestaurants(any(Integer.class), any(Integer.class)))
 				.thenReturn(responseDto);
 		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants?pagenumber=1&pagesize=10")
-				.accept(MediaType.ALL).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.ALL);
 
 		mockMvc.perform(request).andExpect(status().isOk()).andExpect(content().json(
 				"{restaurants:[{budget: 400, cuisine: Italian, id: 1, location: \"RR Nagar\", name: Dominos, rating: 4.2}], totalElements: 20, totalPages: 2}"))
@@ -76,7 +80,7 @@ public class RestaurantControllerTest {
 		Mockito.when(restaurantService.findAllRestaurants(any(Integer.class), any(Integer.class)))
 				.thenReturn(responseDto);
 		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants?pagenumber=0&pagesize=0")
-				.accept(MediaType.ALL).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.ALL);
 
 		mockMvc.perform(request).andExpect(status().is(400)).andReturn();
 	}
@@ -89,7 +93,7 @@ public class RestaurantControllerTest {
 		Mockito.when(restaurantService.findAllRestaurants(any(Integer.class), any(Integer.class)))
 				.thenReturn(responseDto);
 		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants?pagenumber=1&pagesize=1")
-				.accept(MediaType.ALL).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.ALL);
 
 		mockMvc.perform(request).andExpect(status().is(404)).andReturn();
 	}
@@ -105,8 +109,8 @@ public class RestaurantControllerTest {
 		requestDto.setName("Sip n Bite");
 		requestDto.setRating(4.3);
 		when(restaurantService.saveRestaurant(any(RestaurantRequestDto.class))).thenReturn(new Restaurant());
-		RequestBuilder request = MockMvcRequestBuilders.post("/restaurant").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString((requestDto))).header(HttpHeaders.AUTHORIZATION, jwt);
+		RequestBuilder request = MockMvcRequestBuilders.post("/restaurants").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString((requestDto)));
 		mockMvc.perform(request).andExpect(status().is(200))
 				.andExpect(content().string("Restaurant Added successfully")).andReturn();
 	}
@@ -123,7 +127,7 @@ public class RestaurantControllerTest {
 
 		// request
 		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/rating/4.3?pagenumber=1&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().isOk())
@@ -144,7 +148,7 @@ public class RestaurantControllerTest {
 
 		// request
 		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/rating/4.3?pagenumber=0&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().is(400))
@@ -165,7 +169,7 @@ public class RestaurantControllerTest {
 
 		// request
 		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/rating/4.3?pagenumber=1&pagesize=0")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().is(400))
@@ -184,7 +188,7 @@ public class RestaurantControllerTest {
 
 		// request
 		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/rating/4.3?pagenumber=1&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().is(404))
@@ -204,8 +208,8 @@ public class RestaurantControllerTest {
 		when(restaurantService.findByName(any(String.class), anyInt(), anyInt())).thenReturn(responseDTO);
 
 		// request
-		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/name/dominos?pagenumber=1&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/dominos?pagenumber=1&pagesize=10")
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().isOk()).andReturn();
@@ -222,8 +226,8 @@ public class RestaurantControllerTest {
 		when(restaurantService.findByName(any(String.class), anyInt(), anyInt())).thenReturn(responseDTO);
 
 		// request
-		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/name/dominos?pagenumber=0&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/dominos?pagenumber=0&pagesize=10")
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().is(400)).andReturn();
@@ -240,8 +244,8 @@ public class RestaurantControllerTest {
 		when(restaurantService.findByName(any(String.class), anyInt(), anyInt())).thenReturn(responseDTO);
 
 		// request
-		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/name/dominos?pagenumber=1&pagesize=0")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/dominos?pagenumber=1&pagesize=0")
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().is(400)).andReturn();
@@ -257,7 +261,7 @@ public class RestaurantControllerTest {
 
 		// request
 		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/name/dominos?pagenumber=1&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().is(404)).andReturn();
@@ -277,7 +281,7 @@ public class RestaurantControllerTest {
 		// request
 		RequestBuilder request = MockMvcRequestBuilders
 				.get("/restaurants/location/rr/cuisine/italian?pagenumber=1&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().isOk()).andReturn();
@@ -297,7 +301,7 @@ public class RestaurantControllerTest {
 		// request
 		RequestBuilder request = MockMvcRequestBuilders
 				.get("/restaurants/location/rr/cuisine/italian?pagenumber=0&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().is(400)).andReturn();
@@ -317,7 +321,7 @@ public class RestaurantControllerTest {
 		// request
 		RequestBuilder request = MockMvcRequestBuilders
 				.get("/restaurants/location/rr/cuisine/italian?pagenumber=1&pagesize=0")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().is(400)).andReturn();
@@ -335,7 +339,7 @@ public class RestaurantControllerTest {
 		// request
 		RequestBuilder request = MockMvcRequestBuilders
 				.get("/restaurants/location/rr/cuisine/italian?pagenumber=1&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().is(404)).andReturn();
@@ -353,9 +357,8 @@ public class RestaurantControllerTest {
 				.thenReturn(responseDTO);
 
 		// request
-		RequestBuilder request = MockMvcRequestBuilders
-				.get("/restaurants/name/dominos/location/rr?pagenumber=1&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/dominos/location/rr?pagenumber=1&pagesize=10")
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().isOk()).andReturn();
@@ -373,9 +376,8 @@ public class RestaurantControllerTest {
 				.thenReturn(responseDTO);
 
 		// request
-		RequestBuilder request = MockMvcRequestBuilders
-				.get("/restaurants/name/dominos/location/rr?pagenumber=0&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/dominos/location/rr?pagenumber=0&pagesize=10")
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().is(400)).andReturn();
@@ -393,7 +395,7 @@ public class RestaurantControllerTest {
 		// request
 		RequestBuilder request = MockMvcRequestBuilders
 				.get("/restaurants/name/dominos/location/rr?pagenumber=1&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().is(404)).andReturn();
@@ -411,7 +413,7 @@ public class RestaurantControllerTest {
 
 		// request
 		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/budget/400?pagenumber=1&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().isOk())
@@ -432,7 +434,7 @@ public class RestaurantControllerTest {
 
 		// request
 		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/budget/400?pagenumber=0&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().is(400))
@@ -451,7 +453,7 @@ public class RestaurantControllerTest {
 
 		// request
 		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/budget/400?pagenumber=1&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().is(404))
@@ -469,8 +471,8 @@ public class RestaurantControllerTest {
 				.asList(new MenuItem("Dosa", "Plain Dosa", 200, menu), new MenuItem("Khara Bath", "Bath", 200, menu)));
 
 		// request
-		RequestBuilder request = MockMvcRequestBuilders.get("/restaurant/items/1?pagenumber=1&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/1/items?pagenumber=1&pagesize=10")
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().is(200)).andReturn();
@@ -483,21 +485,20 @@ public class RestaurantControllerTest {
 
 		// request
 		RequestBuilder request = MockMvcRequestBuilders.get("/restaurant/items/1?pagenumber=1&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+				.accept(MediaType.APPLICATION_JSON);
 
 		// response
 		mockMvc.perform(request).andExpect(status().is(404)).andReturn();
 	}
 
-	@Test(expected = InvalidTokenException.class)
-	public void getItemsByRestaurantId_invalid() throws Exception {
-		// mocking
-		when(restaurantService.findMenuItemByRestaurantId(anyLong(), anyInt(), anyInt())).thenReturn(Arrays.asList());
-		// request
-		RequestBuilder request = MockMvcRequestBuilders.get("/restaurant/items/1?pagenumber=1&pagesize=10")
-				.accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, jwt);
+	@Test
+	public void getRestaurantsContainingItem() throws Exception {
 
-		// response
-		mockMvc.perform(request).andExpect(status().is(404)).andReturn();
+		when(menuItemService.findByName(any(String.class), anyInt(), anyInt())).thenReturn(new ArrayList<>());
+		RequestBuilder request = MockMvcRequestBuilders.get("/restaurants/item/rajma?pagenumber=1&pagesize=10")
+				.accept(MediaType.ALL);
+		mockMvc.perform(request).andExpect(status().is(200))
+
+				.andReturn();
 	}
 }

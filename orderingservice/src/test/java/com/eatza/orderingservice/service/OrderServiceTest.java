@@ -50,9 +50,6 @@ public class OrderServiceTest {
 	@Mock
 	private ItemService itemService;
 
-	@Mock
-	private RestTemplate restTemplate;
-
 
 
 	@Test
@@ -90,7 +87,7 @@ public class OrderServiceTest {
 		when(orderRepository.save(any(Order.class)))
 		.thenReturn(new Order(orderRequest.getCustomerId(), "CREATED", orderRequest.getRestaurantId()));
 
-		when(restTemplate.getForObject(any(String.class),any(Class.class))).thenReturn(item);
+		when(itemService.findItemById(anyLong())).thenReturn(item);
 		when(itemService.saveItem(any(OrderedItem.class))).thenReturn(new OrderedItem());
 
 		Order order = orderService.placeOrder(orderRequest);
@@ -117,7 +114,7 @@ public class OrderServiceTest {
 		when(orderRepository.save(any(Order.class)))
 		.thenReturn(new Order(orderRequest.getCustomerId(), "CREATED", orderRequest.getRestaurantId()));
 
-		when(restTemplate.getForObject(any(String.class),any(Class.class))).thenReturn(item);
+		when(itemService.findItemById(anyLong())).thenReturn(item);
 		//		when(itemService.saveItem(any(OrderedItem.class))).thenReturn(new OrderedItem());
 
 		Order order = orderService.placeOrder(orderRequest);
@@ -143,7 +140,7 @@ public class OrderServiceTest {
 		when(orderRepository.save(any(Order.class)))
 		.thenReturn(new Order(orderRequest.getCustomerId(), "CREATED", orderRequest.getRestaurantId()));
 
-		when(restTemplate.getForObject(any(String.class),any(Class.class))).thenReturn(null);
+		when(itemService.findItemById(anyLong())).thenReturn(null);
 		//		when(itemService.saveItem(any(OrderedItem.class))).thenReturn(new OrderedItem());
 
 		Order order = orderService.placeOrder(orderRequest);
@@ -170,7 +167,7 @@ public class OrderServiceTest {
 		when(orderRepository.save(any(Order.class)))
 		.thenReturn(new Order(orderRequest.getCustomerId(), "CREATED", orderRequest.getRestaurantId()));
 
-		when(restTemplate.getForObject(any(String.class),any(Class.class))).thenReturn(item);
+		when(itemService.findItemById(anyLong())).thenReturn(item);
 		//		when(itemService.saveItem(any(OrderedItem.class))).thenReturn(new OrderedItem());
 		Order order = orderService.placeOrder(orderRequest);
 		assertNotNull(order);
@@ -260,7 +257,7 @@ public class OrderServiceTest {
 		MenuFetchDto menu = new MenuFetchDto(1L, "10", "22", restaurant);
 		ItemFetchDto item = new ItemFetchDto(1L, "Onion Dosa", "Dosa", 110, menu);
 
-		when(restTemplate.getForObject(any(String.class),any(Class.class))).thenReturn(item);
+		when(itemService.findItemById(anyLong())).thenReturn(item);
 		orderService.updateOrder(new OrderUpdateDto(1L, 1L, Arrays.asList(new OrderedItemsDto(1L, 0)), 1L));
 
 	}
@@ -288,7 +285,7 @@ public class OrderServiceTest {
 		MenuFetchDto menu = new MenuFetchDto(1L, "10", "22", restaurant);
 		ItemFetchDto item = new ItemFetchDto(1L, "Onion Dosa", "Dosa", 110, menu);
 
-		when(restTemplate.getForObject(any(String.class),any(Class.class))).thenReturn(item);
+		when(itemService.findItemById(anyLong())).thenReturn(item);
 		orderService.updateOrder(new OrderUpdateDto(1L, 1L, Arrays.asList(new OrderedItemsDto(1L, 1)), 1L));
 
 	}
@@ -305,7 +302,7 @@ public class OrderServiceTest {
 		MenuFetchDto menu = new MenuFetchDto(1L, "10", "22", restaurant);
 		ItemFetchDto item = new ItemFetchDto(1L, "Onion Dosa", "Dosa", 110, menu);
 
-		when(restTemplate.getForObject(any(String.class),any(Class.class))).thenReturn(item);
+		when(itemService.findItemById(anyLong())).thenReturn(item);
 		when( itemService.saveItem(any(OrderedItem.class))).thenReturn(new OrderedItem("Onion Dosa", 1, 110, orderReturned, 1L));
 		when(orderRepository.save(any(Order.class))).thenReturn(orderReturned);
 	

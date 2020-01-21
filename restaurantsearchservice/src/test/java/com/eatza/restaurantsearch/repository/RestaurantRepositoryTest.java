@@ -17,7 +17,6 @@ import com.eatza.restaurantsearch.model.Restaurant;
 @DataJpaTest
 public class RestaurantRepositoryTest {
 	
-	
 	@Autowired
 	RestaurantRepository restaurantRepository;
 	
