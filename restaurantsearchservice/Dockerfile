@@ -1,7 +1,9 @@
-FROM openjdk:8
+FROM maven:3.6-jdk-8-alpine as build
+ADD ./ app/
+WORKDIR /app
+RUN mvn install -DskipTests
 
-COPY ./target/restaurantsearchservice-*.jar restaurantsearchservice.jar
-
-EXPOSE 8080
-
-CMD ["java","-jar","-Dspring.profile.active=dev","restaurantsearchservice.jar"]
+FROM openjdk:8-jdk-alpine
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8410
+ENTRYPOINT ["java","-jar","-Dspring.profiles.active=dev","app.jar"]
