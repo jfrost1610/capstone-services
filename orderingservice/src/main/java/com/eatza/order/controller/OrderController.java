@@ -19,6 +19,7 @@ import com.eatza.order.dto.OrderUpdateDto;
 import com.eatza.order.dto.OrderUpdateResponseDto;
 import com.eatza.order.exception.OrderException;
 import com.eatza.order.model.Order;
+import com.eatza.order.publisher.KafkaPublisher;
 import com.eatza.order.service.OrderService;
 
 @RestController
@@ -26,6 +27,9 @@ public class OrderController {
 
 	@Autowired
 	OrderService orderService;
+
+	@Autowired
+	KafkaPublisher publisher;
 
 	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
@@ -88,6 +92,12 @@ public class OrderController {
 			logger.debug("No result found for specified inputs");
 			throw new OrderException("No result found for specified inputs");
 		}
+	}
+
+	@PostMapping("/postmessage")
+	public ResponseEntity<String> send(@RequestBody String payload) {
+		publisher.publishToTopic(payload);
+		return ResponseEntity.status(HttpStatus.OK).body("Message: {" + payload + "} sent to topic.");
 	}
 
 }
