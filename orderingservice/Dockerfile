@@ -5,5 +5,5 @@ RUN mvn install -DskipTests
 
 FROM openjdk:8-jdk-alpine
 COPY --from=build /app/target/*.jar app.jar
-EXPOSE 8421
+EXPOSE 8411
 ENTRYPOINT ["java","-jar","-Dspring.profiles.active=dev","app.jar"]
