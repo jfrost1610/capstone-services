@@ -18,6 +18,7 @@ import com.eatza.order.dto.OrderRequestDto;
 import com.eatza.order.dto.OrderUpdateDto;
 import com.eatza.order.dto.OrderUpdateResponseDto;
 import com.eatza.order.exception.OrderException;
+import com.eatza.order.model.KafkaMessage;
 import com.eatza.order.model.Order;
 import com.eatza.order.publisher.KafkaPublisher;
 import com.eatza.order.service.OrderService;
@@ -95,7 +96,7 @@ public class OrderController {
 	}
 
 	@PostMapping("/postmessage")
-	public ResponseEntity<String> send(@RequestBody String payload) {
+	public ResponseEntity<String> send(@RequestBody KafkaMessage payload) {
 		publisher.publishToTopic(payload);
 		return ResponseEntity.status(HttpStatus.OK).body("Message: {" + payload + "} sent to topic.");
 	}
