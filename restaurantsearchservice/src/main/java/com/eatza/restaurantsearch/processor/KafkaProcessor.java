@@ -13,7 +13,7 @@ public class KafkaProcessor {
 
 	@KafkaListener(topics = "${kafka.topic}")
 	public void receiveTopic1(KafkaMessage payload) {
-		log.info("Receiver on topic: " + payload);
+		log.info("Message received : [{}]. Sent by {}", payload.getMessage(), payload.getSender());
 	}
 
 }
