@@ -98,7 +98,8 @@ public class OrderController {
 	@PostMapping("/postmessage")
 	public ResponseEntity<String> send(@RequestBody KafkaMessage payload) {
 		publisher.publishToTopic(payload);
-		return ResponseEntity.status(HttpStatus.OK).body("Message: {" + payload + "} sent to topic.");
+		return ResponseEntity.status(HttpStatus.OK)
+				.body("Message: {" + payload.getMessage() + " from " + payload.getSender() + "} sent to topic.");
 	}
 
 }

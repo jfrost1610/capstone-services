@@ -2,6 +2,7 @@ package com.eatza.orderingservice.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,26 +16,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.SettableListenableFuture;
 
+import com.eatza.order.config.KafkaConfig;
 import com.eatza.order.controller.OrderController;
 import com.eatza.order.dto.OrderRequestDto;
 import com.eatza.order.dto.OrderUpdateDto;
 import com.eatza.order.dto.OrderUpdateResponseDto;
 import com.eatza.order.dto.OrderedItemsDto;
 import com.eatza.order.exception.CustomGlobalExceptionHandler;
+import com.eatza.order.model.KafkaMessage;
 import com.eatza.order.model.Order;
 import com.eatza.order.model.OrderedItem;
+import com.eatza.order.publisher.KafkaPublisher;
 import com.eatza.order.service.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(OrderController.class)
-@ContextConfiguration(classes = {OrderController.class,CustomGlobalExceptionHandler.class})
+@ContextConfiguration(classes = { OrderController.class, CustomGlobalExceptionHandler.class, KafkaPublisher.class,
+		KafkaConfig.class, KafkaPublisher.class })
 public class OrderControllerTest {
 
 	@Autowired
@@ -45,6 +54,9 @@ public class OrderControllerTest {
 
 	@Autowired
 	private ObjectMapper objectMapper;
+
+	@MockBean
+	private KafkaTemplate<String, KafkaMessage> kafkaTemplate;
 
 	@Test
 	public void placeOrder() throws Exception {
@@ -126,6 +138,21 @@ public class OrderControllerTest {
 				.thenReturn(new OrderUpdateResponseDto(1L, 1L, "UPDATED", 1L, orderedList));
 		RequestBuilder request = MockMvcRequestBuilders.put("/order").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString((orderUpdateDto)));
+		mockMvc.perform(request).andExpect(status().is(200)).andReturn();
+
+	}
+
+	@Test
+	public void sendMessage() throws Exception {
+
+		KafkaMessage payload = new KafkaMessage();
+		payload.setMessage("Test message");
+		payload.setSender("Test Sender");
+		ListenableFuture<SendResult<String, KafkaMessage>> future = new SettableListenableFuture<>();
+		when(kafkaTemplate.send(anyString(), any(KafkaMessage.class))).thenReturn(future);
+
+		RequestBuilder request = MockMvcRequestBuilders.post("/postmessage").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString((payload)));
 		mockMvc.perform(request).andExpect(status().is(200)).andReturn();
 
 	}

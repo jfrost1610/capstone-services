@@ -1,10 +1,12 @@
 package com.eatza.restaurantsearch.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class KafkaMessage {
-	
+
 	private String message;
 	private String sender;
 
